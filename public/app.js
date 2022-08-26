@@ -1,20 +1,89 @@
 // get user's data
-// get user's coordinates
 
+// get user's coordinates                                                                                                                                                                              
+async function getCoords(){
+    pos = await new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject)
+    }).then((value) => {
+        console.log(value); // "Success!"
+        console.log("Returning Cords"); 
+        return [pos.coords.latitude], [pos.coords.longitude]
+      })
+        .catch((e) => {
+          console.error(e); // "oh, no!"
+        })
+        .then(
+          () => {
+            console.log("Rejected"); 
+            pos.coords.latitude = '43.089777'
+            pos.coords.longitude = '-89.415377'
+            return [pos.coords.latitude], [pos.coords.longitude]
+        },
+          () => console.log("Not fired due to the catch")
+        );
+    /*
+    Promise.prototype.catch((error) => {
+        console.log(error);
+      });  
+    if (Promise.prototype.reject == true) {
+        
+        console.log("Rejected"); 
+        return [43.089777, -89.415377]
+    } else {
+        console.log("Returning Cords"); 
+        return [pos.coords.latitude, pos.coords.longitude]
+    } */
+}
 
-// get user's time
-
+// get user's time                                                         
+function userTime(){
+    const now = new Date()
+    return now.getHours()                                                  
+}
 
 // helper functions
 // check time of day
-
-
+function getMealTime(){
+    const tod = userTime()
+    
+    if (tod > 20) {return 'late-night snack'}
+    else if (tod > 16) {return 'dinner'}
+    else if (tod > 11) {return 'lunch'}
+    else {return 'breakfast'}
+    
+    // A ternary is another way to write an if-else statement
+    // Another way to write the above lines would to refactor it as:
+    // return tod > 20 ? 'late-night snack' : tod > 16 ? 'dinner' : tod > 11 ? 'lunch' : 'breakfast' // <--- this is an example of a ternary
+}
+    
 // build ads
 // build ad 1
-
-
-// build ad 2
-
+                                                       
+function buildAd1(){
+    const mealTime = getMealTime()
+    let content = document.querySelector('.ad1')
+    let inner = document.createElement('p')
+    inner.innerHTML = `We've got the best <span>${mealTime}</span> in town`
+    content.append(inner)
+}
+                                                                    
+// build ad 2                                                        
+function buildAd2(coordinates){
+    const coords = coordinates
+    console.log(coordinates)
+    const href = `https://www.google.com/maps/search/coffee/@${coords[0]},${coords[1]},15z/`
+    let content = document.querySelector('.ad2')
+    let inner = document.createElement('p')
+    inner.innerHTML = `It's time to try our coffee! <span><a href="${href}" target="_blank">We're this close!</a></span>`
+    content.append(inner)
+}
 
 // event listeners
-// on load, build ads
+// On load, build ads:                                                             
+window.onload = async () => {
+    buildAd1()
+    const coords = await getCoords()
+    buildAd2(coords)
+    
+}
+
